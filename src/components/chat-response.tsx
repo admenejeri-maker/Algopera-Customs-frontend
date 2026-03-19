@@ -12,6 +12,22 @@ import { parseCitedIds } from "@/lib/parseCitedIds"
 import { useFeatureFlags } from "@/hooks/useFeatureFlags"
 import type { SourceDetail } from "@/types/api"
 
+// ── Source type map for infohub family detection ─────────────────────────────
+const SOURCE_TYPE_MAP: Record<string, { label: string; family: 'infohub' | 'matsne' }> = {
+    infohub_tax_code:   { label: 'საგადასახადო კოდექსი', family: 'infohub' },
+    infohub_normative:  { label: 'ნორმატიული აქტი', family: 'infohub' },
+    infohub_admin:      { label: 'ადმინისტრაციული აქტი', family: 'infohub' },
+    infohub_legislative:{ label: 'საკანონმდებლო აქტი', family: 'infohub' },
+    infohub_sm:         { label: 'სიტუაციური სახელმძღვანელო', family: 'infohub' },
+    infohub:            { label: 'ინფოჰაბი', family: 'infohub' },
+    matsne:             { label: 'საკანონმდებლო მაცნე', family: 'matsne' },
+};
+
+function isInfohubFamily(source?: string): boolean {
+    if (!source) return false;
+    return SOURCE_TYPE_MAP[source]?.family === 'infohub';
+}
+
 // Dynamic import: ProductCard only needed when products exist in response
 const ProductCard = dynamic(
     () => import('./ProductCard').then(mod => ({ default: mod.ProductCard })),
@@ -93,7 +109,7 @@ function CitationText({
 
                 const source = sources?.[part.num - 1];
                 const hasSource = !!source;
-                const isInfohub = source?.source === 'infohub';
+                const isInfohub = isInfohubFamily(source?.source);
 
                 return (
                     <button
@@ -294,7 +310,7 @@ export function ChatResponse({
                                         return (
                                             <button
                                                 key={src.id || originalIdx}
-                                                className={`citation-footer-chip text-xs px-2 py-0.5 rounded-full cursor-pointer transition-colors ${src.source === 'infohub' ? 'citation-chip--infohub' : 'citation-chip--active'}`}
+                                                className={`citation-footer-chip text-xs px-2 py-0.5 rounded-full cursor-pointer transition-colors ${isInfohubFamily(src.source) ? 'citation-chip--infohub' : 'citation-chip--active'}`}
                                                 onClick={() => onCitationClick?.(originalIdx)}
                                                 title={src.title}
                                                 aria-label={`Source ${originalIdx + 1}: ${src.title}`}

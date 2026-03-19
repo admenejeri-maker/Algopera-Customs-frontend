@@ -31,6 +31,23 @@ function isSafeUrl(url: string): boolean {
     }
 }
 
+/** Source type → Georgian label + family for CSS class selection */
+const SOURCE_TYPE_MAP: Record<string, { label: string; family: 'infohub' | 'matsne' }> = {
+    infohub_tax_code:   { label: 'საგადასახადო კოდექსი', family: 'infohub' },
+    infohub_normative:  { label: 'ნორმატიული აქტი', family: 'infohub' },
+    infohub_admin:      { label: 'ადმინისტრაციული აქტი', family: 'infohub' },
+    infohub_legislative:{ label: 'საკანონმდებლო აქტი', family: 'infohub' },
+    infohub_sm:         { label: 'სიტუაციური სახელმძღვანელო', family: 'infohub' },
+    infohub:            { label: 'ინფოჰაბი', family: 'infohub' },
+    matsne:             { label: 'საკანონმდებლო მაცნე', family: 'matsne' },
+};
+
+/** Check if a source belongs to the infohub family */
+function isInfohubFamily(source?: string): boolean {
+    if (!source) return false;
+    return SOURCE_TYPE_MAP[source]?.family === 'infohub';
+}
+
 // ============================================================================
 // Component
 // ============================================================================
@@ -156,7 +173,7 @@ export function CitationPanel({
                                         მუხ. {source.article_number}
                                     </span>
                                 )}
-                                {!isSituationalGuide && !source.article_number && source.source === 'infohub' && (
+                                {!isSituationalGuide && !source.article_number && isInfohubFamily(source.source) && (
                                     <span className="citation-card__article-num" style={{ backgroundColor: '#FEF3C7', color: '#D97706' }}>
                                         ინფოჰაბი
                                     </span>
@@ -217,7 +234,7 @@ export function CitationPanel({
                             aria-label={`View source: ${source.title}`}
                         >
                             <ExternalLink size={14} />
-                            <span>{isSituationalGuide ? 'ინფოჰაბზე ნახვა' : source.source === 'infohub' ? 'ინფოჰაბზე ნახვა' : 'მაცნეზე ნახვა'}</span>
+                            <span>{isSituationalGuide ? 'ინფოჰაბზე ნახვა' : isInfohubFamily(source.source) ? 'ინფოჰაბზე ნახვა' : 'მაცნეზე ნახვა'}</span>
                         </a>
                     </div>
                 )}

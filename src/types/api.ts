@@ -30,7 +30,7 @@ export interface SourceDetail {
     score: number;
     url?: string;
     text?: string;
-    source?: string;  // "matsne" | "infohub"
+    source?: string;  // "infohub_tax_code" | "infohub_normative" | "infohub_admin" | "infohub_legislative" | "infohub_sm" | "infohub" | "matsne"
     domain?: string;   // Tax domain (e.g., "SITUATIONAL_GUIDE")
 }
 
